@@ -146,6 +146,11 @@ export class VerificationEvidenceRepository {
     ]);
     return result.documents.map((doc) => mapEvidence(doc as unknown as Record<string, unknown>));
   }
+  async getById(id: string, ownerId: string) {
+    const doc = await this.databases.getDocument(this.config.databaseId, this.config.verificationEvidenceCollectionId ?? "cs_verification_evidence", id);
+    const mapped = mapEvidence(doc as unknown as Record<string, unknown>);
+    return mapped.ownerId === ownerId ? mapped : null;
+  }
   async create(input: Omit<VerificationEvidence, "$id" | "createdAt" | "updatedAt">) {
     const now = new Date().toISOString();
     const created = await this.databases.createDocument(
@@ -156,6 +161,18 @@ export class VerificationEvidenceRepository {
       createOwnerPermissions(input.ownerId),
     );
     return mapEvidence(created as unknown as Record<string, unknown>);
+  }
+  async update(id: string, input: Omit<VerificationEvidence, "$id" | "createdAt" | "updatedAt">) {
+    const updated = await this.databases.updateDocument(
+      this.config.databaseId,
+      this.config.verificationEvidenceCollectionId ?? "cs_verification_evidence",
+      id,
+      input,
+    );
+    return mapEvidence(updated as unknown as Record<string, unknown>);
+  }
+  async remove(id: string) {
+    await this.databases.deleteDocument(this.config.databaseId, this.config.verificationEvidenceCollectionId ?? "cs_verification_evidence", id);
   }
 }
 
@@ -169,6 +186,10 @@ export class WebsiteAuditRepository {
       Query.orderDesc("checkedAt"),
     ]);
     return result.documents.map((doc) => mapAudit(doc as unknown as Record<string, unknown>));
+  }
+  async latestByLead(leadId: string, ownerId: string) {
+    const items = await this.listByLead(leadId, ownerId);
+    return items[0] ?? null;
   }
   async create(input: Omit<WebsiteAudit, "$id" | "createdAt" | "updatedAt">) {
     const now = new Date().toISOString();
@@ -201,6 +222,11 @@ export class OutreachDraftRepository {
     ]);
     return result.documents.map((doc) => mapDraft(doc as unknown as Record<string, unknown>));
   }
+  async getById(id: string, ownerId: string) {
+    const doc = await this.databases.getDocument(this.config.databaseId, this.config.outreachDraftsCollectionId ?? "cs_outreach_drafts", id);
+    const mapped = mapDraft(doc as unknown as Record<string, unknown>);
+    return mapped.ownerId === ownerId ? mapped : null;
+  }
   async create(input: Omit<OutreachDraft, "$id" | "createdAt" | "updatedAt">) {
     const { subject: _subject, followUpMessage: _followUpMessage, finalFollowUpMessage: _finalFollowUpMessage, sourceSnapshotJson: _sourceSnapshotJson, ...rest } = input;
     const created = await this.databases.createDocument(
@@ -211,6 +237,10 @@ export class OutreachDraftRepository {
       createOwnerPermissions(input.ownerId),
     );
     return mapDraft(created as unknown as Record<string, unknown>);
+  }
+  async update(id: string, input: Omit<OutreachDraft, "$id" | "createdAt" | "updatedAt">) {
+    const updated = await this.databases.updateDocument(this.config.databaseId, this.config.outreachDraftsCollectionId ?? "cs_outreach_drafts", id, input);
+    return mapDraft(updated as unknown as Record<string, unknown>);
   }
 }
 
@@ -225,6 +255,11 @@ export class FollowUpRepository {
     ]);
     return result.documents.map((doc) => mapFollowUp(doc as unknown as Record<string, unknown>));
   }
+  async getById(id: string, ownerId: string) {
+    const doc = await this.databases.getDocument(this.config.databaseId, this.config.followUpsCollectionId ?? "cs_follow_ups", id);
+    const mapped = mapFollowUp(doc as unknown as Record<string, unknown>);
+    return mapped.ownerId === ownerId ? mapped : null;
+  }
   async create(input: Omit<FollowUp, "$id" | "createdAt" | "updatedAt">) {
     const { skipReason: _skipReason, notes: _notes, ...rest } = input;
     const created = await this.databases.createDocument(
@@ -235,5 +270,12 @@ export class FollowUpRepository {
       createOwnerPermissions(input.ownerId),
     );
     return mapFollowUp(created as unknown as Record<string, unknown>);
+  }
+  async update(id: string, input: Omit<FollowUp, "$id" | "createdAt" | "updatedAt">) {
+    const updated = await this.databases.updateDocument(this.config.databaseId, this.config.followUpsCollectionId ?? "cs_follow_ups", id, input);
+    return mapFollowUp(updated as unknown as Record<string, unknown>);
+  }
+  async remove(id: string) {
+    await this.databases.deleteDocument(this.config.databaseId, this.config.followUpsCollectionId ?? "cs_follow_ups", id);
   }
 }

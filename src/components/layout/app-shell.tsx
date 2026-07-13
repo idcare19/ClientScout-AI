@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, FolderKanban, Menu, Settings, LogOut, Plus } from "lucide-react";
+import { BarChart3, CalendarClock, FolderKanban, Mail, Menu, Settings, ShieldCheck, LogOut, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getBrowserAccount } from "@/lib/appwrite/client";
@@ -11,6 +11,9 @@ import { getBrowserAccount } from "@/lib/appwrite/client";
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
   { href: "/leads", label: "Leads", icon: FolderKanban },
+  { href: "/verification", label: "Verification", icon: ShieldCheck },
+  { href: "/outreach", label: "Outreach", icon: Mail },
+  { href: "/follow-ups", label: "Follow-ups", icon: CalendarClock },
   { href: "/leads/import", label: "Import Leads", icon: Plus },
   { href: "/settings", label: "Settings", icon: Settings },
 ];

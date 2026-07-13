@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getJwtFromCookies } from "@/lib/appwrite/server";
 import { createLeadServices } from "@/lib/services/lead-service";
+import { createPhase2Services } from "@/lib/services/phase2-service";
 import { getLeadScoreBreakdown } from "@/lib/scoring/lead-score";
 import { PageHeader } from "@/components/layout/page-header";
 import { LeadScoreBreakdown } from "@/components/leads/lead-score-breakdown";
@@ -11,6 +12,7 @@ import { ActivityTimeline } from "@/components/leads/activity-timeline";
 import { FollowUpCard } from "@/components/leads/follow-up-card";
 import { ExternalContactLinks } from "@/components/leads/external-contact-links";
 import { LeadActions } from "@/components/leads/lead-actions";
+import { LeadWorkspace } from "@/components/phase2/lead-workspace";
 import { LeadPriorityBadge, LeadScoreBadge, LeadStatusBadge, VerificationBadge, WebsiteStatusBadge } from "@/components/leads/status-badges";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,12 +25,20 @@ export default async function LeadDetailPage({ params }: { params: { leadId: str
 
   const { leadId } = params;
   const services = createLeadServices(jwt);
+  const phase2Services = createPhase2Services(jwt);
 
   let lead!: Awaited<ReturnType<(typeof services)["getLead"]>>;
   let activities!: Awaited<ReturnType<(typeof services)["listActivity"]>>;
+  let phase2Bundle!: Awaited<ReturnType<(typeof phase2Services)["getLeadBundle"]>>;
   try {
-    lead = await services.getLead(leadId, user.$id);
-    activities = await services.listActivity(leadId, user.$id);
+    const [leadRecord, activityRows, bundle] = await Promise.all([
+      services.getLead(leadId, user.$id),
+      services.listActivity(leadId, user.$id),
+      phase2Services.getLeadBundle(leadId, user.$id),
+    ]);
+    lead = leadRecord;
+    activities = activityRows;
+    phase2Bundle = bundle;
   } catch {
     notFound();
   }
@@ -167,6 +177,8 @@ export default async function LeadDetailPage({ params }: { params: { leadId: str
           </CardContent>
         </Card>
       </div>
+
+      <LeadWorkspace lead={lead} bundle={phase2Bundle} />
 
       <div className="grid gap-6 xl:grid-cols-2">
         <Card>

@@ -128,7 +128,7 @@ function scoreBusinessNameMatch(pageTitle: string | null, metaDescription: strin
   return Math.min(100, titleHit + metaHit);
 }
 
-export async function runWebsiteAudit(input: AuditInput, options: AuditOptions = {}) {
+export async function runWebsiteAudit(input: AuditInput, options: AuditOptions = {}): Promise<WebsiteAuditResult> {
   const normalizedUrl = normalizeWebsiteUrl(input.requestedUrl);
   const now = new Date().toISOString();
   if (!normalizedUrl) {
