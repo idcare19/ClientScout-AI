@@ -1,0 +1,11 @@
+export const CLIENTSCOUT_LABEL = "clientscoutaccess";
+export const DEFAULT_DATABASE_ID = "clientscout_db";
+export const LEADS_COLLECTION_ID = "cs_leads";
+export const ACTIVITY_COLLECTION_ID = "cs_activity_logs";
+export const SETTINGS_COLLECTION_ID = "cs_settings";
+export const ASSETS_COLLECTION_ID = "cs_assets";
+export const VERIFICATION_EVIDENCE_COLLECTION_ID = "cs_verification_evidence";
+export const WEBSITE_AUDITS_COLLECTION_ID = "cs_website_audits";
+export const OUTREACH_DRAFTS_COLLECTION_ID = "cs_outreach_drafts";
+export const FOLLOW_UPS_COLLECTION_ID = "cs_follow_ups";
+export const AUTH_COOKIE_NAME = "clientscout_jwt";
